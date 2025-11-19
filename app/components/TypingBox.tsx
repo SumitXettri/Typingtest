@@ -13,6 +13,8 @@ export default function TypingBox() {
   const [typed, setTyped] = useState<string>("");
   const [correctChars, setCorrectChars] = useState<number>(0);
 
+  const [customTime, setCustomTime] = useState<number>(60); // default 60s
+
   const [timeLeft, setTimeLeft] = useState(totalTime);
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
@@ -25,12 +27,13 @@ export default function TypingBox() {
   }, [level]);
 
   // Update total time when level changes
+  // Update total time when level changes — keep constant 60s
   useEffect(() => {
-    const times = { normal: 30, expert: 60, master: 90 };
-    const newTime = times[level];
-    setTotalTime(newTime);
-    setTimeLeft(newTime);
-  }, [level]);
+    if (!isRunning) {
+      setTotalTime(customTime);
+      setTimeLeft(customTime);
+    }
+  }, [customTime, isRunning]);
 
   // Timer countdown
   useEffect(() => {
@@ -71,25 +74,40 @@ export default function TypingBox() {
     <div className="min-h-100 w-full text-white flex flex-col items-center p-6">
       {/* Level selector */}
       <div className="mb-6 flex gap-4 items-center">
-        <label className="font-semibold">English:</label>
-        {!isRunning ? (
-        <button
-          onClick={() => {
-            // Cycle levels: easy → medium → hard → easy
-            setLevel((prev) => {
-              if (prev === "normal") return "expert";
-              if (prev === "expert") return "master";
-              return "normal";
-            });
-          }}
-          className="px-3 py-1 bg-gray-800 text-white rounded hover:bg-gray-700"
-        >
-          {level.charAt(0).toUpperCase() + level.slice(1)}
-          </button>
-           ) : (
-    <span className="px-3 py-1 bg-gray-700 text-gray-300 rounded cursor-not-allowed">
-      {level.charAt(0).toUpperCase() + level.slice(1)}
-    </span>
+        {!isRunning && !isSubmitted && (
+          <div className="mb-6 flex gap-4 items-center">
+            <label className="font-semibold">Level:</label>
+            <button
+              onClick={() =>
+                setLevel((prev) =>
+                  prev === "normal"
+                    ? "expert"
+                    : prev === "expert"
+                    ? "master"
+                    : "normal"
+                )
+              }
+              className="px-3 py-1 bg-gray-800 text-white rounded cursor-pointer hover:bg-gray-700"
+            >
+              {level.charAt(0).toUpperCase() + level.slice(1)}
+            </button>
+            <label className="font-semibold">Time:</label>
+            {[15, 30, 60, 90, 120].map((t) => (
+              <button
+                key={t}
+                onClick={() => setCustomTime(t)}
+                className={`px-3 py-1 rounded ${
+                  customTime === t
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-800 text-white hover:bg-gray-700"
+                }`}
+                disabled={isRunning} // lock buttons when typing starts
+              >
+                {t}s
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Timer / WPM / Accuracy */}
@@ -117,8 +135,8 @@ export default function TypingBox() {
         calculateResults={calculateResults}
       />
 
-      {/* Results modal */}
-      {isSubmitted && (
+      {/* Results or status */}
+      {isSubmitted ? (
         <ResultsModal
           accuracy={accuracy}
           wpm={wpm}
@@ -126,10 +144,12 @@ export default function TypingBox() {
           timeSpent={timeSpent}
           startNewTest={startNewTest}
         />
-      )}
-
-      {!isSubmitted && (
-        <p className="mt-4 text-gray-400">Start typing to begin the test...</p>
+      ) : (
+        <div className="mt-4 text-gray-400">
+          {isRunning
+            ? "Test in progress..."
+            : "Start typing to begin the test..."}
+        </div>
       )}
     </div>
   );

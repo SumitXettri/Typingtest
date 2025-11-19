@@ -68,40 +68,37 @@ export default function TypingArea({
     calculateResults,
   ]);
 
-  // Auto-scroll to current character
+  // Auto-scroll to current character without scrollbar
   useEffect(() => {
     if (currentCharRef.current && containerRef.current) {
       const charOffset = currentCharRef.current.offsetTop;
-      const containerHeight = containerRef.current.clientHeight;
-      containerRef.current.scrollTo({
-        top: charOffset - containerHeight / 2,
-        behavior: "smooth",
-      });
+      containerRef.current.style.transform = `translateY(-${
+        charOffset - containerRef.current.clientHeight / 2
+      }px)`;
     }
   }, [typed]);
 
   return (
-    <div
-      ref={containerRef}
-      className="w-full mb-6 text-4xl leading-relaxed max-h-64 overflow-y-auto"
-    >
-      {text.split("").map((char, index) => {
-        const isCurrent = index === typed.length;
-        let className = "text-gray-400";
-        if (index < typed.length) {
-          className =
-            typed[index] === char ? "text-yellow-400" : "text-red-500";
-        }
-        return (
-          <span
-            key={index}
-            ref={isCurrent ? currentCharRef : null}
-            className={className}
-          >
-            {char}
-          </span>
-        );
-      })}
+    <div className="relative w-full mb-6 text-3xl leading-relaxed h-64 overflow-hidden">
+      <div ref={containerRef} className="absolute top-0 left-0 w-full">
+        {text.split("").map((char, index) => {
+          const isCurrent = index === typed.length;
+          let className = "text-gray-400";
+          if (index < typed.length) {
+            className =
+              typed[index] === char ? "text-yellow-400" : "text-red-500";
+          }
+          return (
+            <span
+              key={index}
+              ref={isCurrent ? currentCharRef : null}
+              className={className}
+            >
+              {char}
+            </span>
+          );
+        })}
+      </div>
     </div>
   );
 }
