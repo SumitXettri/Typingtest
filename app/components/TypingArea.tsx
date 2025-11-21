@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Dispatch, SetStateAction, useRef, useEffect } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useRef } from "react";
 
 interface TypingAreaProps {
   text: string;
@@ -21,18 +21,15 @@ export default function TypingArea({
   setCorrectChars,
   isRunning,
   setIsRunning,
-  isSubmitted,
   timeLeft,
   calculateResults,
 }: TypingAreaProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const currentCharRef = useRef<HTMLSpanElement>(null);
 
-  // Keyboard typing listener
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
-      if (isSubmitted || timeLeft <= 0) return;
-
+      if (timeLeft <= 0) return;
       if (!isRunning) setIsRunning(true);
 
       if (e.key.length === 1 || e.key === "Backspace") {
@@ -40,14 +37,13 @@ export default function TypingArea({
           const newValue =
             e.key === "Backspace" ? prev.slice(0, -1) : prev + e.key;
 
-          // Count correct characters
+          // Count correct chars
           let correct = 0;
           for (let i = 0; i < newValue.length; i++) {
             if (newValue[i] === text[i]) correct++;
           }
           setCorrectChars(correct);
 
-          // Finish test
           if (newValue.length >= text.length) calculateResults();
 
           return newValue;
@@ -59,7 +55,6 @@ export default function TypingArea({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [
     isRunning,
-    isSubmitted,
     text,
     timeLeft,
     setIsRunning,
@@ -68,37 +63,40 @@ export default function TypingArea({
     calculateResults,
   ]);
 
-  // Auto-scroll to current character without scrollbar
+  // Auto scroll to current char
   useEffect(() => {
     if (currentCharRef.current && containerRef.current) {
       const charOffset = currentCharRef.current.offsetTop;
-      containerRef.current.style.transform = `translateY(-${
-        charOffset - containerRef.current.clientHeight / 2
-      }px)`;
+      const containerHeight = containerRef.current.clientHeight;
+      containerRef.current.scrollTo({
+        top: charOffset - containerHeight / 2,
+        behavior: "smooth",
+      });
     }
   }, [typed]);
 
   return (
-    <div className="relative w-full mb-6 text-3xl leading-relaxed h-64 overflow-hidden">
-      <div ref={containerRef} className="absolute top-0 left-0 w-full">
-        {text.split("").map((char, index) => {
-          const isCurrent = index === typed.length;
-          let className = "text-gray-400";
-          if (index < typed.length) {
-            className =
-              typed[index] === char ? "text-yellow-400" : "text-red-500";
-          }
-          return (
-            <span
-              key={index}
-              ref={isCurrent ? currentCharRef : null}
-              className={className}
-            >
-              {char}
-            </span>
-          );
-        })}
-      </div>
+    <div
+      ref={containerRef}
+      className="w-full text-3xl leading-relaxed max-h-64 overflow-hidden"
+    >
+      {text.split("").map((char, index) => {
+        const isCurrent = index === typed.length;
+        let className = "text-gray-400";
+        if (index < typed.length) {
+          className =
+            typed[index] === char ? "text-yellow-400" : "text-red-500";
+        }
+        return (
+          <span
+            key={index}
+            ref={isCurrent ? currentCharRef : null}
+            className={className}
+          >
+            {char}
+          </span>
+        );
+      })}
     </div>
   );
 }
