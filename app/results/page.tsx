@@ -76,7 +76,7 @@ export default function ResultsPage() {
   const maxWpm = Math.max(...chartData.map((d) => d.raw));
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <div className="min-h-screen w-full bg-linear-to-br from-slate-950 via-slate-900 to-slate-950">
       {/* Navbar */}
       <Navbar />
 
@@ -343,7 +343,7 @@ export default function ResultsPage() {
                   </div>
 
                   {/* Time card */}
-                  <div className="mt-3 sm:mt-0 min-w-[160px] bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6 flex flex-col items-start">
+                  <div className="mt-3 sm:mt-0 min-w-160px bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-6 flex flex-col items-start">
                     <div className="text-slate-500 text-xs uppercase tracking-wider mb-2">
                       Time
                     </div>

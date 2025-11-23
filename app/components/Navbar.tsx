@@ -13,7 +13,7 @@ export default function Navbar() {
             <div className="flex items-center gap-6">
               {/* Logo/Brand */}
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-linear-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
                   <svg
                     className="w-5 h-5 text-white"
                     fill="none"
@@ -124,7 +124,7 @@ export default function Navbar() {
               {/* Profile */}
               <button className="flex items-center gap-2  pl-3  text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all">
                 <span className="hidden sm:block font-medium">Guest</span>
-                <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-linear-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
                   <svg
                     className="w-5 h-5 text-white"
                     fill="none"

@@ -49,21 +49,27 @@ export default function TypingBox({ isRunning, setIsRunning }: TypingBoxProps) {
   };
 
   useEffect(() => {
-    if (!isRunning || timeLeft <= 0) return;
+    if (!isRunning) return;
 
     const interval = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          calculateResults();
-          setIsRunning(false);
-          return 0;
-        }
-        return prev - 1;
-      });
+      setTimeLeft((prev) => Math.max(0, prev - 1));
     }, 1000);
 
     return () => clearInterval(interval);
   }, [isRunning]);
+
+  // Handle end-of-test side effects outside of state-updater to avoid "update during render" errors
+  useEffect(() => {
+    if (timeLeft !== 0 || !isRunning) return;
+
+    // stop running immediately
+    setIsRunning(false);
+
+    // schedule navigation/results after render to avoid updating Router while rendering TypingBox
+    setTimeout(() => {
+      calculateResults();
+    }, 0);
+  }, [timeLeft, isRunning]);
 
   const accuracy =
     typed.length === 0 ? 0 : Math.round((correctChars / typed.length) * 100);
