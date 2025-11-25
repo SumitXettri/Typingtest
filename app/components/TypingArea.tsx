@@ -78,22 +78,30 @@ export default function TypingArea({
   return (
     <div
       ref={containerRef}
-      className="w-full text-3xl leading-relaxed max-h-64 overflow-hidden"
+      className="w-full text-4xl leading-relaxed max-h-64 overflow-hidden"
     >
       {text.split("").map((char, index) => {
         const isCurrent = index === typed.length;
         let className = "text-gray-400";
+
         if (index < typed.length) {
           className =
             typed[index] === char ? "text-yellow-400" : "text-red-500";
         }
+
         return (
           <span
             key={index}
             ref={isCurrent ? currentCharRef : null}
-            className={className}
+            className="relative"
           >
-            {char}
+            {/* Character */}
+            <span className={className}>{char}</span>
+
+            {/* Caret added HERE */}
+            {isCurrent && (
+              <span className="caret absolute -right-1 top-0 h-full w-0.5 bg-yellow-400"></span>
+            )}
           </span>
         );
       })}

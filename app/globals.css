@@ -3,3 +3,21 @@
 :root {
   background: #323437;
 }
+
+@keyframes caretBlink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.caret {
+  animation: caretBlink 1s step-start infinite;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+}
