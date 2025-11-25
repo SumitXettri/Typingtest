@@ -43,9 +43,12 @@ export default function TypingBox({ isRunning, setIsRunning }: TypingBoxProps) {
       typed.length === 0 ? 0 : Math.round((correctChars / typed.length) * 100);
     const cps = (correctChars / spent).toFixed(2);
 
-    router.push(
-      `/results?accuracy=${accuracy}&wpm=${finalWpm}&cps=${cps}&timeSpent=${spent}`
-    );
+    // defer navigation to avoid "update during render" errors
+    setTimeout(() => {
+      router.push(
+        `/results?accuracy=${accuracy}&wpm=${finalWpm}&cps=${cps}&timeSpent=${spent}`
+      );
+    }, 0);
   };
 
   useEffect(() => {
